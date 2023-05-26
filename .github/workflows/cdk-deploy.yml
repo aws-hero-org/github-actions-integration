@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload template
         run: >
-          aws s3 cp cdk.out/ s3://${{ vars.TEMPLATE_BUCKET }} /${{ github.sha }}/ \
+          aws s3 cp cdk.out/ s3://${{ vars.TEMPLATE_BUCKET }}/${{ github.sha }}/ \
             --recursive \
             --exclude "*" \
             --include "*.assets.json" \
