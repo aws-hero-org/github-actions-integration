@@ -88,7 +88,7 @@ jobs:
           # Please use a channel ID, not a name here.
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
-            {
+            [{
               "text": "Deployment finished (Completed)",
               "attachments": [
                 {
@@ -101,8 +101,10 @@ jobs:
                       "value": "Completed"
                     }
                   ]
-                },
-                {
+                }
+              ]
+            },
+            {
                   "fallback": "Button not supported",
                   "text": "Button Text",
                   "callback_id": "button_action",
@@ -116,7 +118,6 @@ jobs:
                   ]
                 }
               ]
-            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK}}
 
