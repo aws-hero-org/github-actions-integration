@@ -80,7 +80,7 @@ jobs:
       - name: Create diff
         run: yarn cdk diff
 
-      - name:
+      - name: Send diff to slack
         run: >
           # Update Slack message with completion status
           curl -X POST -H 'Content-type: application/json' --data '{
