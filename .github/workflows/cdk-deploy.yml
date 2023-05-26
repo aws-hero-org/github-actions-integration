@@ -48,7 +48,7 @@ jobs:
         with:
           # The following message update step does not accept a channel name.
           # Setting a channel ID here for consistency is highly recommended.
-          channel-id: "cdk-deployments"
+          channel-id: "C059UELBCJ0"
           payload: |
             {
               "text": "Deployment started (In Progress)",
@@ -87,7 +87,7 @@ jobs:
         with:
           # Unlike the step posting a new message, this step does not accept a channel name.
           # Please use a channel ID, not a name here.
-          channel-id: "cdk-deployments"
+          channel-id: "C059UELBCJ0"
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
