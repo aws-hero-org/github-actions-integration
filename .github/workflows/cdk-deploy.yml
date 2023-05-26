@@ -42,6 +42,27 @@ jobs:
           role-session-name: github-action-deploy
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Send Slack notification
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "Deploy CDK on commit ${{ github.sha }}",
+            "attachments": [
+              {
+                "fallback": "Review the workflow run",
+                "text": "Click the button below to review the workflow run.",
+                "callback_id": "review_workflow_run",
+                "actions": [
+                  {
+                    "name": "review",
+                    "text": "Review",
+                    "type": "button",
+                    "value": "${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}
+
       - name: Synth
         run: yarn cdk synth
 
