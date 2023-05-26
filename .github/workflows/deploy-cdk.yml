@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+    AWS_REGION : "eu-central-1"
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
