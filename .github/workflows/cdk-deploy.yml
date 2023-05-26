@@ -42,29 +42,18 @@ jobs:
           role-session-name: github-action-deploy
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Send Slack notification
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "Deploy CDK on commit ${{ github.sha }}",
-            "attachments": [
-              {
-                "fallback": "Review the workflow run",
-                "text": "Click the button below to review the workflow run.",
-                "callback_id": "review_workflow_run",
-                "actions": [
-                  {
-                    "name": "review",
-                    "text": "Review",
-                    "type": "button",
-                    "value": "${{ github.run_id }}"
-                  }
-                ]
-              }
-            ]
-          }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}
-
-          timestamp=$(echo "$response" | jq -r '.ts')
-          echo "::set-output name=timestamp::$timestamp"
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          # Slack channel id, channel name, or user id to post message.
+          # See also: https://api.slack.com/methods/chat.postMessage#channels
+          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+          channel-id: 'cdk-deployments'
+          # For posting a simple plain text message
+          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: Synth
         run: yarn cdk synth
@@ -80,18 +69,18 @@ jobs:
       - name: Create diff
         run: yarn cdk diff
 
-      - name: Send diff to slack
-        run: |
-          # Update Slack message with completion status
-          curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "The workflow run is completed!",
-            "attachments": [
-              {
-                "fallback": "Workflow completed",
-                "text": "The workflow has finished successfully."
-              }
-            ]
-          }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}/$timestamp
+      # - name: Send diff to slack
+      #   run: |
+      #     # Update Slack message with completion status
+      #     curl -X POST -H 'Content-type: application/json' --data '{
+      #       "text": "The workflow run is completed!",
+      #       "attachments": [
+      #         {
+      #           "fallback": "Workflow completed",
+      #           "text": "The workflow has finished successfully."
+      #         }
+      #       ]
+      #     }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}/$timestamp
 
 
   deploy:
