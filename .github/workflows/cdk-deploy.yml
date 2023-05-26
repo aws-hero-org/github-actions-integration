@@ -63,6 +63,9 @@ jobs:
             ]
           }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}
 
+          timestamp=$(echo "$response" | jq -r '.ts')
+          echo "::set-output name=timestamp::$timestamp"
+
       - name: Synth
         run: yarn cdk synth
 
@@ -76,6 +79,19 @@ jobs:
 
       - name: Create diff
         run: yarn cdk diff
+
+      - name:
+        run: >
+          # Update Slack message with completion status
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "The workflow run is completed!",
+            "attachments": [
+              {
+                "fallback": "Workflow completed",
+                "text": "The workflow has finished successfully."
+              }
+            ]
+          }' ${{ secrets.DEPLOYMENT_SLACK_WEBHOOK }}/$timestamp
 
 
   deploy:
