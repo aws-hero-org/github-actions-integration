@@ -54,6 +54,32 @@ const cdkDeploymentRole = new GithubActionsRole(
           effect: iam.Effect.ALLOW,
           actions: ["sts:AssumeRole"],
           resources: [`arn:aws:iam::${this.account}:role/cdk-*`],
+        })
+      ],
+    });
+```
+
+## Upload of templates, v3.0.0
+To have a history of versions and being able to restore them, it is crucial to have the templates persisted. Therefore, those templates are stored on an S3 bucket, created by the internal stack. An update of the role policy is required.
+
+```typescript
+const cdkDeploymentRole = new GithubActionsRole(
+      this,
+      "role",
+      {
+        provider: provider,
+        owner: "***",
+        repo: "***",
+      }
+    );
+
+    new iam.ManagedPolicy(this, "deploy-cdk-policy", {
+      roles: [cdkDeploymentRole],
+      statements: [
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["sts:AssumeRole"],
+          resources: [`arn:aws:iam::${this.account}:role/cdk-*`],
         }),
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
