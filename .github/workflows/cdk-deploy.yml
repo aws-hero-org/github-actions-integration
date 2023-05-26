@@ -14,7 +14,7 @@ permissions:
     contents: read    # This is required for actions/checkout
 
 jobs:
-  deploy:
+  diff:
     runs-on: ubuntu-latest
 
     steps:
@@ -49,6 +49,30 @@ jobs:
 
       - name: Create diff
         run: yarn cdk diff
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: "diff"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ vars.DEPLOYMENT_ROLE_DEV }}
+          role-session-name: github-action-deploy
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy
         run: npx cdk deploy
