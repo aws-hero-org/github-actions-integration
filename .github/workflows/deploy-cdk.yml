@@ -24,8 +24,8 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ vars.DEPLOYMENT_ROLE_DEV }}
-          role-session-name: samplerolesession
+          role-to-assume: arn:aws:iam::718517280342:role/OidcIntegrationStack-cdkdeploymentroleD9128F24-17I1VB9U8EX5J
+          role-session-name: github-action-deploy
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Create diff
