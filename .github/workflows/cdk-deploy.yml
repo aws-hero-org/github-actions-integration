@@ -101,6 +101,19 @@ jobs:
                       "value": "Completed"
                     }
                   ]
+                },
+                {
+                  "fallback": "Button not supported",
+                  "text": "Button Text",
+                  "callback_id": "button_action",
+                  "actions": [
+                    {
+                      "type": "button",
+                      "text": "Button Text",
+                      "url": "https://example.com",
+                      "style": "primary"
+                    }
+                  ]
                 }
               ]
             }
