@@ -1,10 +1,10 @@
 # Github Actions Integration
 The scope of this repository is to investigate ways on how to deploy CDK with pipelines.
 
-## Test integration of OIDC
+## Test integration of OIDC (v1.0.0)
 The initial step is to test the authentication with AWS. Therefore, a simple example workflow is created that lists all buckets in the AWS account.
 
-For the OIDC integration, there is a CDK stack that sets up required resources. (Tag v1.0.0)
+For the OIDC integration, there is a CDK stack that sets up required resources.
 ```typescript
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -31,4 +31,35 @@ export class OidcIntegrationStack extends cdk.Stack {
   }
 }
 
+```
+
+## Deploy CDK stack with Github Action (v2.0.0)
+At this commit, it was possible to deploy CDK with github actions. Thefefore, the subsequent change of permissions was required
+
+```typescript
+const cdkDeploymentRole = new GithubActionsRole(
+      this,
+      "role",
+      {
+        provider: provider,
+        owner: "***",
+        repo: "***",
+      }
+    );
+
+    new iam.ManagedPolicy(this, "deploy-cdk-policy", {
+      roles: [cdkDeploymentRole],
+      statements: [
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["sts:AssumeRole"],
+          resources: [`arn:aws:iam::${this.account}:role/cdk-*`],
+        }),
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["s3:PutObject"],
+          resources: ['arn:aws:s3::<>/*'],
+        }),
+      ],
+    });
 ```
